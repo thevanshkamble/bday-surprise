@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birthday Dreamscape ✨💖.</title>
+  <title>Birthday Dreamscape ✨💖</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -125,6 +126,31 @@
       min-height: 22px;
       font-weight: 600;
     }
+
+    /* Headphone Notice Box Style */
+    .headphone-card {
+      background: rgba(247, 37, 133, 0.1);
+      border: 2px dashed var(--primary-coral);
+      border-radius: 20px;
+      padding: 18px 15px;
+      margin: 18px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .headphone-img {
+      width: 55px;
+      height: 55px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -136,7 +162,7 @@
 
     <div id="page-q1" class="page active">
       <h2>Security Lock #1 ✨</h2>
-      <p>Kya tumh Hhi Birthday Girl hho Pehle correct answer do tabhi Parda Fash honga!! </p>
+      <p>Kya tum hi Birthday Girl ho? Pehle correct answer do tabhi Parda Fash hoga!!</p>
       <h3 style="color: var(--primary-coral); margin-bottom: 15px;">Who is the PM of India?</h3>
       <div class="options-grid">
         <button class="option-btn" onclick="checkQ1('Narendra Modi')">Narendra Modi</button>
@@ -149,19 +175,30 @@
 
     <div id="page-q2" class="page">
       <h2>Security Lock #2 🌈</h2>
-      <p>Final Check: What is the name of our upcoming children?👉🏻👈🏻</p>
+      <p>Final Check: What is the name of our upcoming children? 👉🏻👈🏻</p>
       <div class="options-grid">
-        <button class="option-btn" onclick="checkQ2('Hamod priya')">Durex Belavita</button>
-        <button class="option-btn" onclick="checkQ2('Durex Belavita')">Hamod Habibi</button>
-        <button class="option-btn" onclick="checkQ2('Rashmika Ranbir')">Kama Sutra</button>
-        <button class="option-btn" onclick="checkQ2('rahul natasha')">Bokachoda Suar Ka Bacha</button>
+        <button class="option-btn" onclick="checkQ2('Durex Belavita')">Durex Belavita</button>
+        <button class="option-btn" onclick="checkQ2('Hamod Habibi')">Hamod Habibi</button>
+        <button class="option-btn" onclick="checkQ2('Kama Sutra')">Kama Sutra</button>
+        <button class="option-btn" onclick="checkQ2('Bokachoda Suar Ka Bacha')">Bokachoda Suar Ka Bacha</button>
       </div>
-      <div id="err-q1" class="error-msg"></div>
+      <div id="err-q2" class="error-msg"></div>
     </div>
 
     <div id="page-welcome" class="page">
       <h1 class="fancy-font">Happy Birthday My Love! 🎈🎂</h1>
-      <p style="font-size: 1.05rem; color: #4a5568;">You unlocked the secret dreamscape vault! ❤️✨</p>
+      
+      <div class="headphone-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/27/27134.png" alt="Headphones" class="headphone-img">
+        <p style="margin: 0; font-weight: 600; color: var(--deep-purple); font-size: 0.95rem;">
+          🎧 Put on your headphones right now!<br>It is extremely important! 💖
+        </p>
+      </div>
+
+      <p style="font-size: 1.1rem; color: #4a5568; font-weight: 600;">
+        Be ready, we don't have time! ✨🔥
+      </p>
+      
       <p style="font-size: 1.4rem; font-weight: 600; color: var(--primary-coral);">
         I Love You To The Moon & Back! 💕
       </p>
@@ -170,7 +207,7 @@
 
   <script>
     const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
-    const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY_HERE"; // PASTE YOUR KEY HERE
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmC1_KEY_HERE"; // Apni exact publishable key yahan paste karein
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function sendLog(event, details) {
@@ -180,6 +217,24 @@
     }
 
     sendLog("System Event", "Sunset Pastel Site Opened");
+
+    function triggerFireworks() {
+      // Grand Confetti / Fireworks Explosion
+      var count = 200;
+      var defaults = { origin: { y: 0.7 } };
+
+      function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        }));
+      }
+
+      fire(0.25, { spread: 26, startVelocity: 55, colors: ['#f72585', '#7209b7'] });
+      fire(0.2, { spread: 60, colors: ['#4cc9f0', '#ffffff'] });
+      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#ffecd2', '#fcb69f'] });
+      fire(0.1, { spread: 120, startVelocity: 45 });
+    }
 
     function checkQ1(selectedAnswer) {
       sendLog("Q1 Click", `Selected '${selectedAnswer}'`);
@@ -199,8 +254,14 @@
       if (selectedAnswer === 'Durex Belavita') {
         document.getElementById('err-q2').innerText = "";
         sendLog("Q2 Result", "PASSED -> Birthday Vault Unlocked! 🎉");
+        
+        // Page change
         document.getElementById('page-q2').classList.remove('active');
         document.getElementById('page-welcome').classList.add('active');
+        
+        // Trigger Fireworks Celebration!
+        triggerFireworks();
+        setTimeout(triggerFireworks, 600);
       } else {
         document.getElementById('err-q2').innerText = "Arre galat jawab! Aise kaise? 😜";
         sendLog("Q2 Result", "FAILED (Wrong Option)");
