@@ -3,39 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday My Love! ❤️</title>
+  <title>Cyber Heart Vault ❤️✨</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Sacramento&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;600&family=Sacramento&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #ff4d6d;
-      --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #feada6 100%);
-      --glass-bg: rgba(255, 255, 255, 0.3);
-      --glass-border: rgba(255, 255, 255, 0.5);
+      --neon-pink: #ff2a6d;
+      --neon-cyan: #05d9e8;
+      --neon-purple: #d800ff;
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --glass-border: rgba(255, 42, 109, 0.35);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { min-height: 100vh; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; overflow-x: hidden; position: relative; }
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-    .container { position: relative; z-index: 10; width: 90%; max-width: 480px; background: var(--glass-bg); backdrop-filter: blur(14px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 35px 25px; box-shadow: 0 10px 30px rgba(255, 77, 109, 0.25); text-align: center; color: #2b2b2b; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(255, 42, 109, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(5, 217, 232, 0.15) 0%, transparent 40%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      color: #f8fafc;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 35px 25px;
+      box-shadow: 0 0 25px rgba(255, 42, 109, 0.2), inset 0 0 15px rgba(5, 217, 232, 0.1);
+      text-align: center;
+    }
+
     .page { display: none; }
-    .page.active { display: block; animation: fadeIn 0.6s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    h1, h2 { color: #c9184a; margin-bottom: 12px; }
-    .fancy-font { font-family: 'Sacramento', cursive; font-size: 3rem; color: #800f2f; }
-    p { margin-bottom: 20px; font-size: 0.95rem; color: #4a4a4a; }
-    .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-    .option-btn { background: rgba(255, 255, 255, 0.85); border: 2px solid transparent; padding: 14px 18px; border-radius: 16px; font-size: 0.95rem; font-weight: 500; color: #333; cursor: pointer; transition: all 0.3s ease; }
-    .option-btn:hover { background: #ffffff; border-color: var(--primary-color); transform: translateY(-2px); }
-    .error-msg { color: #d62828; font-size: 0.88rem; margin-top: 14px; min-height: 22px; font-weight: 600; }
+    .page.active { display: block; animation: neonFade 0.6s ease-in-out; }
+
+    @keyframes neonFade {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1, h2 {
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #fff;
+      text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+      margin-bottom: 12px;
+    }
+
+    .fancy-font {
+      font-family: 'Sacramento', cursive;
+      font-size: 3.2rem;
+      text-transform: none;
+      color: #fff;
+      text-shadow: 0 0 12px var(--neon-pink), 0 0 25px var(--neon-purple);
+    }
+
+    p { margin-bottom: 20px; font-size: 0.95rem; color: #94a3b8; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+
+    .option-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(5, 217, 232, 0.4);
+      color: var(--neon-cyan);
+      transform: translateY(-2px);
+    }
+
+    .option-btn:active { transform: translateY(0); }
+
+    .error-msg {
+      color: var(--neon-pink);
+      font-size: 0.88rem;
+      margin-top: 16px;
+      min-height: 22px;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(255, 42, 109, 0.6);
+    }
   </style>
 </head>
 <body>
+
   <canvas id="bg-canvas"></canvas>
+
   <div class="container">
+    <!-- Question 1 -->
     <div id="page-q1" class="page active">
-      <h2 class="fancy-font">Security Lock Check #1 🌸</h2>
-      <p>Pehle correct answer do tabhi birthday surprise khulega!</p>
-      <h3>Who is the PM of India?</h3>
+      <h2>Security Lock #1 🔒</h2>
+      <p>System access requires correct clearance.</p>
+      <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">Who is the PM of India?</h3>
       <div class="options-grid">
         <button class="option-btn" onclick="checkQ1('Narendra Modi')">Narendra Modi</button>
         <button class="option-btn" onclick="checkQ1('Jawaharlal Nehru')">Jawaharlal Nehru</button>
@@ -45,9 +137,11 @@
       <div id="err-q1" class="error-msg"></div>
     </div>
 
+    <!-- Question 2 -->
     <div id="page-q2" class="page">
-      <h2 class="fancy-font">Security Lock Check #2 💖</h2>
-      <p>Final Check: What is the name of our upcoming children?</p>
+      <h2>Security Lock #2 ⚡</h2>
+      <p>Final Verification Step.</p>
+      <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">What is the name of our upcoming children?</h3>
       <div class="options-grid">
         <button class="option-btn" onclick="checkQ2('Hamod Habibi')">Hamod Habibi</button>
         <button class="option-btn" onclick="checkQ2('Durex Belavita')">Durex Belavita</button>
@@ -57,33 +151,38 @@
       <div id="err-q2" class="error-msg"></div>
     </div>
 
+    <!-- Surprise Unlocked Page -->
     <div id="page-welcome" class="page">
-      <h1 class="fancy-font">Happy Birthday My Love! 🎉🎂</h1>
-      <p>You unlocked the secret vault! You are the most special person in my life. ❤️🌸</p>
-      <p style="font-size: 1.3rem; font-weight: 600; color: #c9184a;">I Love You So Much! 💕</p>
+      <h1 class="fancy-font">Happy Birthday My Love! 🎉✨</h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem;">Access Granted to My Heart's Vault. ❤️</p>
+      <p style="font-size: 1.4rem; font-weight: 600; color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
+        I Love You Unlimited! 💕⚡
+      </p>
     </div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; // PASTE COPIED KEY HERE
+    const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY_HERE"; // PASTE COPIED PUBLISHABLE KEY HERE
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function sendLog(event, details) {
-      await supabaseClient.from('logs').insert([{ event, details }]);
+      try {
+        await supabaseClient.from('logs').insert([{ event, details }]);
+      } catch (err) { console.log(err); }
     }
 
-    sendLog("Page Event", "User opened Birthday Site (Q1 Page)");
+    sendLog("System Event", "Cyber Site Opened");
 
     function checkQ1(selectedAnswer) {
       sendLog("Q1 Click", `Selected '${selectedAnswer}'`);
       if (selectedAnswer === 'Jawaharlal Nehru') {
         document.getElementById('err-q1').innerText = "";
-        sendLog("Q1 Result", "PASSED -> Moved to Q2");
+        sendLog("Q1 Result", "PASSED -> Q2 Unlocked");
         document.getElementById('page-q1').classList.remove('active');
         document.getElementById('page-q2').classList.add('active');
       } else {
-        document.getElementById('err-q1').innerText = "Wrong answer baby! Sahi wala select karo 😉";
+        document.getElementById('err-q1').innerText = "Access Denied! Wrong key selection 😉";
         sendLog("Q1 Result", "FAILED (Wrong Option)");
       }
     }
@@ -92,39 +191,61 @@
       sendLog("Q2 Click", `Selected '${selectedAnswer}'`);
       if (selectedAnswer === 'Durex Belavita') {
         document.getElementById('err-q2').innerText = "";
-        sendLog("Q2 Result", "PASSED -> Unlocked Birthday Vault Page! 🎉");
+        sendLog("Q2 Result", "PASSED -> Birthday Vault Unlocked! 🚀");
         document.getElementById('page-q2').classList.remove('active');
         document.getElementById('page-welcome').classList.add('active');
       } else {
-        document.getElementById('err-q2').innerText = "Arre galat jawab! Aise kaise? 😜";
+        document.getElementById('err-q2').innerText = "Wrong answer baby! Think again 😜";
         sendLog("Q2 Result", "FAILED (Wrong Option)");
       }
     }
 
-    // Flower Canvas Animation
+    // Glowing Neon Particle Background
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
-    const elements = [];
-    const symbols = ['🌸', '🌺', '💖', '✨', '🌷', '💕'];
-    class FloatingElement {
+
+    const particles = [];
+    const colors = ['#ff2a6d', '#05d9e8', '#d800ff'];
+
+    class NeonParticle {
       constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20;
-        this.size = Math.random() * 22 + 14;
-        this.speedY = Math.random() * 1.4 + 0.6;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
-        this.opacity = Math.random() * 0.7 + 0.3;
+        this.y = canvas.height + 10;
+        this.size = Math.random() * 3 + 1;
+        this.speedY = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.alpha = Math.random() * 0.8 + 0.2;
       }
-      update() { this.y -= this.speedY; this.x += this.speedX; if (this.y < -30) this.reset(); }
-      draw() { ctx.globalAlpha = this.opacity; ctx.font = `${this.size}px serif`; ctx.fillText(this.symbol, this.x, this.y); }
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        if (this.y < -10) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
     }
-    for (let i = 0; i < 35; i++) elements.push(new FloatingElement());
-    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); elements.forEach(el => { el.update(); el.draw(); }); requestAnimationFrame(animate); }
+
+    for (let i = 0; i < 50; i++) particles.push(new NeonParticle());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
     animate();
   </script>
 </body>
