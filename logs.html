@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baby's Activity Logs 🕵️‍♂️</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; padding: 25px; min-height: 100vh; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #334155; }
+    h1 { color: #38bdf8; font-size: 1.4rem; }
+    button { background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+    .logs-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 15px; font-family: monospace; max-height: 80vh; overflow-y: auto; }
+    .log-item { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 0.9rem; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🕵️‍♂️ Real-Time Baby Clicks & Page Logs</h1>
+    <button onclick="fetchLogs()">🔄 Refresh Logs</button>
+  </div>
+  <div id="logs-box" class="logs-box">Loading activity logs...</div>
+
+  <script>
+    const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; // PASTE COPIED KEY HERE
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function fetchLogs() {
+      const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
+      const logsBox = document.getElementById('logs-box');
+      if (error || !data || data.length === 0) {
+        logsBox.innerHTML = "<div class='log-item'>No logs recorded yet.</div>";
+        return;
+      }
+      logsBox.innerHTML = data.map(log => {
+        const time = new Date(log.created_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+        return `<div class='log-item'>[${time}] <b>${log.event}:</b> ${log.details}</div>`;
+      }).join('');
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 3000); // Live Auto-refresh every 3s
+  </script>
+</body>
+</html>
