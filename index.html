@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday My Love! ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff4d6d;
+      --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #feada6 100%);
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { min-height: 100vh; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    
+    .container {
+      position: relative; z-index: 10; width: 90%; max-width: 500px;
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px 25px;
+      box-shadow: 0 8px 32px 0 rgba(255, 77, 109, 0.2); text-align: center; color: #2b2b2b;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+    h1, h2 { color: #c9184a; margin-bottom: 15px; }
+    .fancy-font { font-family: 'Sacramento', cursive; font-size: 2.8rem; color: #800f2f; }
+    p { margin-bottom: 20px; font-size: 0.95rem; color: #4a4a4a; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.7); border: 2px solid transparent; padding: 12px 18px;
+      border-radius: 14px; font-size: 0.95rem; font-weight: 500; color: #333; cursor: pointer; transition: all 0.3s ease;
+    }
+    .option-btn:hover { background: #ffffff; border-color: var(--primary-color); transform: translateY(-2px); }
+    .error-msg { color: #d62828; font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <!-- PAGE 1: Question 1 -->
+    <div id="page-q1" class="page active">
+      <h2 class="fancy-font">Security Lock Check #1 🌸</h2>
+      <p>Answer this correctly to prove it's really you!</p>
+      <h3>Who is the PM of India?</h3>
+
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkQ1('Narendra Modi')">Narendra Modi</button>
+        <button class="option-btn" onclick="checkQ1('Jawaharlal Nehru')">Jawaharlal Nehru</button>
+        <button class="option-btn" onclick="checkQ1('Rahul Gandhi')">Rahul Gandhi</button>
+        <button class="option-btn" onclick="checkQ1('Manmohan Singh')">Manmohan Singh</button>
+      </div>
+      <div id="err-q1" class="error-msg"></div>
+    </div>
+
+    <!-- PAGE 2: Question 2 -->
+    <div id="page-q2" class="page">
+      <h2 class="fancy-font">Security Lock Check #2 💖</h2>
+      <p>Final Check: Name of our upcoming children?</p>
+
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkQ2('Hamod Habibi')">Hamod Habibi</button>
+        <button class="option-btn" onclick="checkQ2('Durex Belavita')">Durex Belavita</button>
+        <button class="option-btn" onclick="checkQ2('Kama Sutra')">Kama Sutra</button>
+        <button class="option-btn" onclick="checkQ2('Bokachoda Suar Ka Bacha')">Bokachoda Suar Ka Bacha</button>
+      </div>
+      <div id="err-q2" class="error-msg"></div>
+    </div>
+
+    <!-- PAGE 3: Birthday Surprise Landing Page -->
+    <div id="page-welcome" class="page">
+      <h1 class="fancy-font">Happy Birthday My Love! 🎉🎂</h1>
+      <p>You unlocked the secret vault! You are the most special person in my life. ❤️🌸</p>
+      <p style="font-size: 1.2rem; font-weight: 600; color: #c9184a;">I Love You So Much! 💕</p>
+    </div>
+  </div>
+
+  <script>
+    // Server Remote Logging Call
+    function sendLogToServer(action, details) {
+      fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, details })
+      }).catch(err => console.error(err));
+    }
+
+    sendLogToServer("System", "User opened birthday lock page");
+
+    function checkQ1(selectedAnswer) {
+      sendLogToServer("Q1 Attempt", `Selected '${selectedAnswer}'`);
+      
+      if (selectedAnswer === 'Jawaharlal Nehru') {
+        document.getElementById('err-q1').innerText = "";
+        sendLogToServer("Q1 Status", "PASSED");
+        document.getElementById('page-q1').classList.remove('active');
+        document.getElementById('page-q2').classList.add('active');
+      } else {
+        document.getElementById('err-q1').innerText = "Wrong answer baby! Try again 😉";
+        sendLogToServer("Q1 Status", "FAILED");
+      }
+    }
+
+    function checkQ2(selectedAnswer) {
+      sendLogToServer("Q2 Attempt", `Selected '${selectedAnswer}'`);
+      
+      if (selectedAnswer === 'Durex Belavita') {
+        document.getElementById('err-q2').innerText = "";
+        sendLogToServer("Q2 Status", "PASSED - Vault Unlocked");
+        document.getElementById('page-q2').classList.remove('active');
+        document.getElementById('page-welcome').classList.add('active');
+      } else {
+        document.getElementById('err-q2').innerText = "Arre galat jawab! Sahi wala select karo 😜";
+        sendLogToServer("Q2 Status", "FAILED");
+      }
+    }
+
+    // Flowers Background Effect
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const elements = [];
+    const symbols = ['🌸', '🌺', '💖', '✨', '🌷', '💕'];
+    class FloatingElement {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 20;
+        this.size = Math.random() * 20 + 15;
+        this.speedY = Math.random() * 1.5 + 0.5;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        this.opacity = Math.random() * 0.7 + 0.3;
+      }
+      update() { this.y -= this.speedY; this.x += this.speedX; if (this.y < -30) this.reset(); }
+      draw() { ctx.globalAlpha = this.opacity; ctx.font = `${this.size}px serif`; ctx.fillText(this.symbol, this.x, this.y); }
+    }
+    for (let i = 0; i < 30; i++) elements.push(new FloatingElement());
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      elements.forEach(el => { el.update(); el.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
