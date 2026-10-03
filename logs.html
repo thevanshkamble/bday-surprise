@@ -48,20 +48,32 @@
       gap: 10px;
     }
 
-    .refresh-btn {
-      background: linear-gradient(135deg, #f72585, #7209b7);
-      border: none;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 500;
     }
 
-    .refresh-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
     .log-list {
@@ -79,7 +91,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 15px;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .log-card.new-entry {
+      animation: highlight 1.5s ease-out;
+    }
+
+    @keyframes highlight {
+      0% { background: rgba(247, 37, 133, 0.3); transform: scale(1.02); }
+      100% { background: rgba(255, 255, 255, 0.03); transform: scale(1); }
     }
 
     .log-card:hover {
@@ -108,7 +129,6 @@
       color: #64748b;
     }
 
-    /* COLOR BADGES */
     .badge {
       padding: 6px 14px;
       border-radius: 30px;
@@ -119,21 +139,18 @@
       white-space: nowrap;
     }
 
-    /* Green Badge for Correct Answer & Next Page */
     .badge-pass {
       background: rgba(34, 197, 94, 0.15);
       color: #4ade80;
       border: 1px solid rgba(34, 197, 94, 0.4);
     }
 
-    /* Red Badge for Wrong Answer */
     .badge-fail {
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.4);
     }
 
-    /* Blue Badge for Clicks & System Open */
     .badge-info {
       background: rgba(56, 189, 248, 0.15);
       color: #38bdf8;
@@ -153,22 +170,56 @@
   <div class="container">
     <header>
       <h1>Activity Tracker 🕵️‍♂️</h1>
-      <button class="refresh-btn" onclick="fetchLogs()">🔄 Refresh</button>
+      <div class="status-indicator">
+        <span class="live-dot"></span> Realtime Live
+      </div>
     </header>
 
     <div id="logs-container" class="log-list">
-      <div class="loading">Logs load ho rahe hain...</div>
+      <div class="loading">Live connection establish ho raha hai...</div>
     </div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; // Apni exact publishable key paste karein
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function fetchLogs() {
+    function createLogCard(log, isNew = false) {
+      const card = document.createElement('div');
+      card.className = `log-card ${isNew ? 'new-entry' : ''}`;
+
+      let badgeClass = 'badge-info';
+      let statusText = 'CLICKED';
+
+      const detailsUpper = (log.details || '').toUpperCase();
+      const eventUpper = (log.event || '').toUpperCase();
+
+      if (detailsUpper.includes('PASSED') || detailsUpper.includes('UNLOCKED')) {
+        badgeClass = 'badge-pass';
+        statusText = '✅ CORRECT / NEXT PAGE';
+      } else if (detailsUpper.includes('FAILED') || detailsUpper.includes('WRONG')) {
+        badgeClass = 'badge-fail';
+        statusText = '❌ WRONG ANSWER';
+      } else if (eventUpper.includes('SYSTEM')) {
+        statusText = '🌐 SITE OPENED';
+      }
+
+      const formattedTime = new Date(log.created_at || Date.now()).toLocaleString();
+
+      card.innerHTML = `
+        <div class="log-info">
+          <div class="event-type">${log.event || 'User Action'}</div>
+          <div class="event-details">${log.details || 'No details'}</div>
+          <div class="timestamp">🕒 ${formattedTime}</div>
+        </div>
+        <div class="badge ${badgeClass}">${statusText}</div>
+      `;
+      return card;
+    }
+
+    async function fetchInitialLogs() {
       const container = document.getElementById('logs-container');
-      container.innerHTML = '<div class="loading">Logs load ho rahe hain...</div>';
 
       try {
         const { data, error } = await supabaseClient
@@ -178,58 +229,43 @@
 
         if (error) throw error;
 
+        container.innerHTML = '';
+
         if (!data || data.length === 0) {
-          container.innerHTML = '<div class="loading">Koi activity record nahi hui abhi tak!</div>';
+          container.innerHTML = '<div class="loading">Abhi tak koi activity record nahi hui hai!</div>';
           return;
         }
 
-        container.innerHTML = '';
         data.forEach(log => {
-          const card = document.createElement('div');
-          card.className = 'log-card';
-
-          let badgeClass = 'badge-info';
-          let statusText = 'CLICKED';
-
-          const detailsUpper = (log.details || '').toUpperCase();
-          const eventUpper = (log.event || '').toUpperCase();
-
-          // Green status logic (Sahi Answer / Next Page Unlocked)
-          if (detailsUpper.includes('PASSED') || detailsUpper.includes('UNLOCKED')) {
-            badgeClass = 'badge-pass';
-            statusText = '✅ CORRECT / NEXT PAGE';
-          } 
-          // Red status logic (Galat Answer)
-          else if (detailsUpper.includes('FAILED') || detailsUpper.includes('WRONG')) {
-            badgeClass = 'badge-fail';
-            statusText = '❌ WRONG ANSWER';
-          } 
-          // Default Blue info
-          else if (eventUpper.includes('SYSTEM')) {
-            statusText = '🌐 SITE OPENED';
-          }
-
-          const formattedTime = new Date(log.created_at).toLocaleString();
-
-          card.innerHTML = `
-            <div class="log-info">
-              <div class="event-type">${log.event || 'User Action'}</div>
-              <div class="event-details">${log.details || 'No details'}</div>
-              <div class="timestamp">🕒 ${formattedTime}</div>
-            </div>
-            <div class="badge ${badgeClass}">${statusText}</div>
-          `;
-
-          container.appendChild(card);
+          container.appendChild(createLogCard(log));
         });
 
       } catch (err) {
-        container.innerHTML = `<div class="loading" style="color: #f87171;">Error loading logs: ${err.message}</div>`;
+        container.innerHTML = `<div class="loading" style="color: #f87171;">Error loading initial logs: ${err.message}</div>`;
       }
     }
 
-    // Auto load logs when page opens
-    fetchLogs();
+    function subscribeToRealtimeLogs() {
+      const container = document.getElementById('logs-container');
+
+      supabaseClient
+        .channel('public:logs')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, payload => {
+          const newLog = payload.new;
+          
+          const loadingElem = container.querySelector('.loading');
+          if (loadingElem) {
+            container.innerHTML = '';
+          }
+
+          const card = createLogCard(newLog, true);
+          container.insertBefore(card, container.firstChild);
+        })
+        .subscribe();
+    }
+
+    fetchInitialLogs();
+    subscribeToRealtimeLogs();
   </script>
 </body>
 </html>
