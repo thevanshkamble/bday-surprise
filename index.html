@@ -32,7 +32,7 @@
       transition: background 1.5s ease;
     }
 
-    /* New Theme Applied when entering Fantasy World */
+    /* New Fantasy Theme */
     body.fantasy-theme {
       background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 40%, #764ba2 80%, #667eea 100%);
       background-size: 200% 200%;
@@ -167,7 +167,7 @@
       100% { transform: scale(1); }
     }
 
-    /* Custom Voice Player Styling */
+    /* Voice Player Box */
     .voice-player-box {
       background: rgba(255, 255, 255, 0.85);
       border: 2px solid var(--primary-coral);
@@ -215,7 +215,7 @@
       transition: width 0.1s linear;
     }
 
-    /* Gift Box Grid System */
+    /* Gift Grid */
     .gifts-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -230,7 +230,6 @@
       padding: 15px 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      position: relative;
     }
 
     .gift-card:hover {
@@ -241,7 +240,7 @@
     .gift-icon { font-size: 2.2rem; margin-bottom: 5px; }
     .gift-number { font-weight: 700; color: var(--deep-purple); font-size: 1.1rem; }
 
-    /* Modal / Gift Popup */
+    /* Modal */
     .gift-modal {
       display: none;
       position: fixed;
@@ -323,7 +322,7 @@
       </button>
     </div>
 
-    <!-- PAGE 4: VOICE NOTE PAGE (NEW THEME) -->
+    <!-- PAGE 4: VOICE NOTE PAGE -->
     <div id="page-voice" class="page">
       <h2>Listen Carefully 🎧✨</h2>
       <p>Mera special voice note suno, iss audio recording mein aage ka Raaz hai! 😉</p>
@@ -338,7 +337,6 @@
         <span id="voice-time" style="font-size: 0.8rem; color: #718096; display: block; margin-top: 8px;">00:00 / 00:00</span>
       </div>
 
-      <!-- Hidden Audio Tag: Apna voice note link yahan 'src' mein dalein -->
       <audio id="bg-voice-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
       <button class="action-btn primary" style="margin-top: 15px;" onclick="goToGiftsPage()">
@@ -346,7 +344,7 @@
       </button>
     </div>
 
-    <!-- PAGE 5: GIFT BOX UNLOCKING PAGE -->
+    <!-- PAGE 5: GIFTS PAGE -->
     <div id="page-gifts" class="page">
       <h2>Open Your Gifts! 🎁💖</h2>
       <p>Voice note ke mutabiq gift number par click karke apna surprise unlock karo!</p>
@@ -366,13 +364,13 @@
         </div>
       </div>
 
-      <p style="font-size: 0.85rem; color: #718096; margin-top: 10px;">
-        ✨ Har gift box mein ek pyaara message/surprise chhupa hai!
-      </p>
+      <button class="action-btn" style="margin-top: 10px; font-size: 0.85rem;" onclick="resetProgress()">
+        🔄 Restart From Beginning
+      </button>
     </div>
   </div>
 
-  <!-- GIFT SURPRISE MODAL -->
+  <!-- GIFT MODAL -->
   <div class="gift-modal" id="gift-modal">
     <div class="gift-modal-content">
       <h3 id="gift-title" style="color: var(--primary-coral);">Gift Title</h3>
@@ -382,7 +380,6 @@
   </div>
 
   <script>
-    // Supabase Configuration
     const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -393,7 +390,42 @@
       } catch (err) { console.log(err); }
     }
 
-    sendLog("System Event", "Site Opened");
+    /* --- PAGE SWITCHING & LOCAL STORAGE RESUME LOGIC --- */
+    function navigateToPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+        
+        // LocalStorage mein save karo taaki reload par wahi khule
+        localStorage.setItem('birthday_active_page', pageId);
+        
+        // Agar theme change wale pages hain toh fantasy theme activate karo
+        if (pageId === 'page-voice' || pageId === 'page-gifts') {
+          document.body.classList.add('fantasy-theme');
+          document.getElementById('main-gif').src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG4wb3VscDFxYjl5eG01NWtrOXFvYXo1ZGtmb2E0aXJpazZwdnhuNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpwBcxajGQ7SZF888g/giphy.gif";
+        } else {
+          document.body.classList.remove('fantasy-theme');
+        }
+      }
+    }
+
+    // Window reload hote hi purane page ko restore karne ka logic
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedPage = localStorage.getItem('birthday_active_page');
+      if (savedPage) {
+        navigateToPage(savedPage);
+        sendLog("Page Reloaded", `Restored user to '${savedPage}'`);
+      } else {
+        sendLog("System Event", "Site Opened Initially");
+      }
+    });
+
+    function resetProgress() {
+      localStorage.removeItem('birthday_active_page');
+      navigateToPage('page-q1');
+      sendLog("User Action", "Reset site back to Q1");
+    }
 
     function triggerFireworks() {
       var count = 200;
@@ -417,8 +449,7 @@
       if (selectedAnswer === 'Jawaharlal Nehru') {
         document.getElementById('err-q1').innerText = "";
         sendLog("Q1 Result", "PASSED -> Q2 Unlocked");
-        document.getElementById('page-q1').classList.remove('active');
-        document.getElementById('page-q2').classList.add('active');
+        navigateToPage('page-q2');
       } else {
         document.getElementById('err-q1').innerText = "Wrong answer baby! Sahi wala select karo 😉";
         sendLog("Q1 Result", "FAILED (Wrong Option)");
@@ -430,10 +461,7 @@
       if (selectedAnswer === 'Durex Belavita') {
         document.getElementById('err-q2').innerText = "";
         sendLog("Q2 Result", "PASSED -> Welcome Page Unlocked! 🎉");
-        
-        document.getElementById('page-q2').classList.remove('active');
-        document.getElementById('page-welcome').classList.add('active');
-        
+        navigateToPage('page-welcome');
         triggerFireworks();
         setTimeout(triggerFireworks, 600);
       } else {
@@ -442,17 +470,9 @@
       }
     }
 
-    /* Transition to Fantasy Theme & Voice Page */
     function goToFantasyWorld() {
-      sendLog("Navigation", "Entered Birthday Fantasy World (New Theme)");
-      document.body.classList.add('fantasy-theme');
-      
-      // Update Gif
-      document.getElementById('main-gif').src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG4wb3VscDFxYjl5eG01NWtrOXFvYXo1ZGtmb2E0aXJpazZwdnhuNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpwBcxajGQ7SZF888g/giphy.gif";
-      
-      document.getElementById('page-welcome').classList.remove('active');
-      document.getElementById('page-voice').classList.add('active');
-      
+      sendLog("Navigation", "Entered Birthday Fantasy World");
+      navigateToPage('page-voice');
       triggerFireworks();
     }
 
@@ -501,12 +521,11 @@
     function goToGiftsPage() {
       audio.pause();
       sendLog("Navigation", "Moved to Gift Box Page");
-      document.getElementById('page-voice').classList.remove('active');
-      document.getElementById('page-gifts').classList.add('active');
+      navigateToPage('page-gifts');
       triggerFireworks();
     }
 
-    /* Gift Opening Modal Logic */
+    /* Gift Modal Logic */
     const giftsData = {
       1: { title: "Gift #1: Sweet Hugs 🤗", text: "You get unlimited virtual hugs and kisses valid forever! ❤️" },
       2: { title: "Gift #2: Dream Vacation ✈️", text: "A promise ticket for our next cute weekend date together! 🌸" },
