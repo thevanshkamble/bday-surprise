@@ -182,7 +182,10 @@
 
   <script>
     const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn";
+    
+    // Apni official Supabase 'anon' public key yahan paste karo (eyJhbGci...)
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; 
+
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     function createLogCard(log, isNew = false) {
@@ -241,16 +244,19 @@
         });
 
       } catch (err) {
-        container.innerHTML = `<div class="loading" style="color: #f87171;">Error loading initial logs: ${err.message}</div>`;
+        console.error("Supabase Error:", err);
+        container.innerHTML = `<div class="loading" style="color: #f87171;">
+          <b>Error loading logs:</b> ${err.message || 'Failed to fetch'}<br>
+          <small style="color: #cbd5e1;">Check if AdBlocker is enabled or verify Supabase Anon Key.</small>
+        </div>`;
       }
     }
 
     function subscribeToRealtimeLogs() {
-      const container = document.getElementById('logs-container');
-
       supabaseClient
         .channel('public:logs')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, payload => {
+          const container = document.getElementById('logs-container');
           const newLog = payload.new;
           
           const loadingElem = container.querySelector('.loading');
