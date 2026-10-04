@@ -77,7 +77,6 @@
       font-size: 1.6rem;
     }
 
-    /* Audio Player Wrapper & Glow Effects */
     .audio-card {
       background: rgba(255, 255, 255, 0.85);
       border: 2px solid var(--glass-border);
@@ -97,7 +96,6 @@
       border-color: var(--primary-coral);
     }
 
-    /* Disc Visualizer */
     .disc-container {
       position: relative;
       width: 110px;
@@ -134,7 +132,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Animated Sound Waves (Equalizer) */
     .sound-waves {
       display: flex;
       align-items: flex-end;
@@ -184,7 +181,6 @@
       color: var(--primary-coral);
     }
 
-    /* Action & Next Buttons */
     .action-btn {
       background: linear-gradient(135deg, var(--primary-coral), var(--deep-purple));
       color: #ffffff;
@@ -205,7 +201,6 @@
       transform: translateY(-3px) scale(1.02);
     }
 
-    /* Locked state styling for Next Button */
     .action-btn:disabled {
       background: #cbd5e0;
       color: #a0aec0;
@@ -249,10 +244,10 @@
         <div class="bar"></div>
       </div>
 
-      <!-- Audio Element -->
-      <audio id="voice-note" controls>
-        <!-- Yahan apni audio file ka filename/path dalein -->
-        <source src="hello.aac" type="audio/mpeg">
+      <!-- Fixed Audio Element with Proper MIME Type -->
+      <audio id="voice-note" controls preload="metadata">
+        <source src="hello.aac" type="audio/aac">
+        <source src="hello.aac" type="audio/mp4">
         Your browser does not support the audio element.
       </audio>
 
@@ -283,9 +278,18 @@
     const nextBtn = document.getElementById('next-btn');
     const lockHint = document.getElementById('lock-hint');
 
+    // Audio Error Handling (Aapko batayega agar file miss ho ya corrupt ho)
+    audio.addEventListener('error', (e) => {
+      console.error("Audio Load Error:", e);
+      statusText.innerText = "❌ Audio load nahi ho pa rahi! Please check if 'hello.aac' exists in same folder.";
+      statusText.style.color = "#f43f5e";
+      sendLog("Audio Error", "Failed to load hello.aac file");
+    });
+
     // Audio Play Event
     audio.addEventListener('play', () => {
       audioCard.classList.add('playing');
+      statusText.style.color = "";
       statusText.innerText = "🎶 Playing voice note... Listen carefully! 💕";
       sendLog("Audio State", "Started playing voice note");
     });
@@ -315,10 +319,10 @@
     });
 
     // Next page navigation logic
-    function goToNextPage() {
+    async function goToNextPage() {
       if (!nextBtn.disabled) {
-        sendLog("Navigation", "Voice Note Completed -> Moving to Next Page");
-        window.location.href = "page2.html"; // <-- Yahan apne agle page ka filename/URL dalein
+        await sendLog("Navigation", "Voice Note Completed -> Moving to Next Page");
+        window.location.href = "page2.html";
       }
     }
 
@@ -330,7 +334,7 @@
     resizeCanvas();
 
     const elements = [];
-    const symbols = ['✨', '💖', '⭐', '🎈', '☁️️', '🌸', '💫', '🎶', '🎵'];
+    const symbols = ['✨', '💖', '⭐', '🎈', '☁', '🌸', '💫', '🎶', '🎵'];
 
     class FloatingPastel {
       constructor() { this.reset(); }
