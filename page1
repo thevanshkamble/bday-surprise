@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Dreamscape - Voice Note 🎧✨</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-coral: #f72585;
+      --deep-purple: #7209b7;
+      --bubblegum-cyan: #4cc9f0;
+      --card-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --gold-accent: #ffb703;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 40%, #e0c3fc 80%, #8ec5fc 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      color: #2d3748;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 2px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 35px 28px;
+      box-shadow: 0 20px 40px rgba(114, 9, 183, 0.15), inset 0 0 25px rgba(255, 255, 255, 0.8);
+      text-align: center;
+      margin: 20px 0;
+      animation: bounceIn 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    h2 {
+      font-family: 'Fredoka', sans-serif;
+      color: var(--deep-purple);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      font-size: 1.6rem;
+    }
+
+    /* Audio Player Wrapper & Glow Effects */
+    .audio-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 2px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 25px 20px;
+      margin: 20px 0;
+      box-shadow: 0 10px 25px rgba(114, 9, 183, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.5s ease;
+    }
+
+    .audio-card.playing {
+      box-shadow: 0 0 30px rgba(247, 37, 133, 0.4), 0 0 15px rgba(76, 201, 240, 0.3);
+      border-color: var(--primary-coral);
+    }
+
+    /* Disc Visualizer */
+    .disc-container {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 15px;
+    }
+
+    .disc {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--deep-purple) 20%, #111 21%, #222 60%, var(--primary-coral) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .disc-inner {
+      width: 35px;
+      height: 35px;
+      background: #fff;
+      border-radius: 50%;
+      border: 4px solid var(--primary-coral);
+    }
+
+    .playing .disc {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Animated Sound Waves (Equalizer) */
+    .sound-waves {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 30px;
+      margin-bottom: 15px;
+    }
+
+    .bar {
+      width: 6px;
+      height: 8px;
+      background: var(--primary-coral);
+      border-radius: 3px;
+      transition: height 0.2s ease;
+    }
+
+    .playing .bar {
+      animation: wave 1s ease-in-out infinite alternate;
+    }
+
+    .playing .bar:nth-child(1) { animation-delay: 0.1s; }
+    .playing .bar:nth-child(2) { animation-delay: 0.4s; }
+    .playing .bar:nth-child(3) { animation-delay: 0.2s; }
+    .playing .bar:nth-child(4) { animation-delay: 0.5s; }
+    .playing .bar:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes wave {
+      0% { height: 8px; background: var(--primary-coral); }
+      100% { height: 32px; background: var(--bubblegum-cyan); }
+    }
+
+    audio {
+      width: 100%;
+      height: 40px;
+      outline: none;
+      border-radius: 20px;
+    }
+
+    .status-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #718096;
+      margin-top: 10px;
+    }
+
+    .playing .status-text {
+      color: var(--primary-coral);
+    }
+
+    /* Action & Next Buttons */
+    .action-btn {
+      background: linear-gradient(135deg, var(--primary-coral), var(--deep-purple));
+      color: #ffffff;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    /* Locked state styling for Next Button */
+    .action-btn:disabled {
+      background: #cbd5e0;
+      color: #a0aec0;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .lock-hint {
+      font-size: 0.82rem;
+      color: var(--primary-coral);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <h2>Listen Carefully 🎧💖</h2>
+    <p style="font-size: 0.9rem; color: #718096; margin-bottom: 5px; font-weight: 500;">
+      A special voice note for you! Press play to listen.
+    </p>
+
+    <!-- Audio Player Card -->
+    <div class="audio-card" id="audio-card">
+      <div class="disc-container">
+        <div class="disc">
+          <div class="disc-inner"></div>
+        </div>
+      </div>
+
+      <!-- Sound Waves Equalizer -->
+      <div class="sound-waves">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      <!-- Audio Element -->
+      <audio id="voice-note" controls>
+        <!-- Yahan apni audio file ka filename/path dalein -->
+        <source src="voicenote.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+
+      <div class="status-text" id="status-text">▶️ Press play to start listening</div>
+    </div>
+
+    <!-- Next Button (Initially Disabled) -->
+    <button id="next-btn" class="action-btn" onclick="goToNextPage()" disabled>
+      Next Page ➔
+    </button>
+    <div id="lock-hint" class="lock-hint">🔒 Audio khatam hone ke baad hi Next button open hoga!</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; 
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function sendLog(event, details) {
+      try {
+        await supabaseClient.from('logs').insert([{ event, details }]);
+      } catch (err) { console.log(err); }
+    }
+
+    const audio = document.getElementById('voice-note');
+    const audioCard = document.getElementById('audio-card');
+    const statusText = document.getElementById('status-text');
+    const nextBtn = document.getElementById('next-btn');
+    const lockHint = document.getElementById('lock-hint');
+
+    // Audio Play Event
+    audio.addEventListener('play', () => {
+      audioCard.classList.add('playing');
+      statusText.innerText = "🎶 Playing voice note... Listen carefully! 💕";
+      sendLog("Audio State", "Started playing voice note");
+    });
+
+    // Audio Pause Event
+    audio.addEventListener('pause', () => {
+      if (!audio.ended) {
+        audioCard.classList.remove('playing');
+        statusText.innerText = "⏸️ Audio Paused";
+        sendLog("Audio State", "Paused voice note");
+      }
+    });
+
+    // Audio Ended Event (Unlocks Next Button)
+    audio.addEventListener('ended', () => {
+      audioCard.classList.remove('playing');
+      statusText.innerText = "✨ Audio Finished! Aap ise dobara bhi sun sakte hain.";
+      
+      // Unlock button
+      nextBtn.disabled = false;
+      lockHint.style.display = "none";
+
+      sendLog("Audio State", "Finished listening to voice note -> Next Unlocked");
+      
+      // Celebrate with confetti
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    });
+
+    // Next page navigation logic
+    function goToNextPage() {
+      if (!nextBtn.disabled) {
+        sendLog("Navigation", "Voice Note Completed -> Moving to Next Page");
+        window.location.href = "gift_page.html"; // <-- Yahan apne agle page ka filename/URL dalein
+      }
+    }
+
+    /* Floating Canvas Background Particles */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const elements = [];
+    const symbols = ['✨', '💖', '⭐', '🎈', '☁️️', '🌸', '💫', '🎶', '🎵'];
+
+    class FloatingPastel {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 20;
+        this.size = Math.random() * 22 + 14;
+        this.speedY = Math.random() * 1.5 + 0.7;
+        this.speedX = Math.sin(Math.random() * Math.PI) * 1.5;
+        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        this.opacity = Math.random() * 0.8 + 0.2;
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += Math.cos(this.y * 0.02) * 1.2;
+        if (this.y < -30) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.font = `${this.size}px serif`;
+        ctx.fillText(this.symbol, this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 40; i++) elements.push(new FloatingPastel());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      elements.forEach(el => { el.update(); el.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
