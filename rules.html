@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Dreamscape - Rules ✨💖</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-coral: #f72585;
+      --deep-purple: #7209b7;
+      --bubblegum-cyan: #4cc9f0;
+      --card-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --gold-accent: #ffb703;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 40%, #e0c3fc 80%, #8ec5fc 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      color: #2d3748;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 2px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 35px 28px;
+      box-shadow: 0 20px 40px rgba(114, 9, 183, 0.15), inset 0 0 25px rgba(255, 255, 255, 0.8);
+      text-align: center;
+      margin: 20px 0;
+      animation: bounceIn 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .cute-gif {
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 20px rgba(247, 37, 133, 0.2);
+    }
+
+    h2 {
+      font-family: 'Fredoka', sans-serif;
+      color: var(--deep-purple);
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+      font-size: 1.6rem;
+    }
+
+    /* Rules List Box */
+    .rules-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 2px dashed var(--primary-coral);
+      border-radius: 24px;
+      padding: 20px 18px;
+      margin: 15px 0;
+      text-align: left;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .rule-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .rule-icon {
+      font-size: 1.3rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .rule-text {
+      font-size: 0.92rem;
+      color: #4a5568;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    .rule-text strong {
+      color: var(--primary-coral);
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, var(--primary-coral), var(--deep-purple));
+      color: #ffffff;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .action-btn:hover {
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+      transform: translateY(-3px) scale(1.02);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <img id="main-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG4wb3VscDFxYjl5eG01NWtrOXFvYXo1ZGtmb2E0aXJpazZwdnhuNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpwBcxajGQ7SZF888g/giphy.gif" alt="Cute Bear" class="cute-gif">
+
+    <h2>Important Rules 📜✨</h2>
+    <p style="font-size: 0.9rem; color: #718096; margin-bottom: 12px; font-weight: 500;">
+      Please follow these rules carefully for the best magic experience! 💖
+    </p>
+
+    <div class="rules-card">
+      <div class="rule-item">
+        <span class="rule-icon">🎧</span>
+        <div class="rule-text">
+          <strong>Listen Carefully:</strong> Every page has its own special voice note. Make sure your headphones are on!
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span class="rule-icon">🎁</span>
+        <div class="rule-text">
+          <strong>Don't Rush Gifts:</strong> Do NOT open any gifts until the voice note specifically mentions the gift name.
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span class="rule-icon">🔢</span>
+        <div class="rule-text">
+          <strong>Follow the Number:</strong> When a gift is mentioned in the audio, open only the exact gift number assigned to it.
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span class="rule-icon">➔</span>
+        <div class="rule-text">
+          <strong>Step-by-Step:</strong> Move to the next page only after listening to the voice note and opening the gifts accordingly.
+        </div>
+      </div>
+
+      <div class="rule-item">
+        <span class="rule-icon">⚠️</span>
+        <div class="rule-text">
+          <strong>Do Not Refresh:</strong> Please do <strong>NOT refresh</strong> the page at any point, or you might lose your place!
+        </div>
+      </div>
+    </div>
+
+    <button class="action-btn" onclick="goToVoicePage()">
+      I Agree & Continue ➔
+    </button>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; 
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function sendLog(event, details) {
+      try {
+        await supabaseClient.from('logs').insert([{ event, details }]);
+      } catch (err) { console.log(err); }
+    }
+
+    // Next page navigation logic
+    function goToVoicePage() {
+      sendLog("Navigation", "Agreed to Rules -> Moving to Next Page");
+      window.location.href = "voice_note_page.html"; // <-- Yahan apne next page ka URL/filename rakhein
+    }
+
+    /* Floating Canvas Background Particles */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const elements = [];
+    const symbols = ['✨', '💖', '⭐', '🎈', '☁️', '🌸', '💫', '🎁'];
+
+    class FloatingPastel {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 20;
+        this.size = Math.random() * 22 + 14;
+        this.speedY = Math.random() * 1.5 + 0.7;
+        this.speedX = Math.sin(Math.random() * Math.PI) * 1.5;
+        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        this.opacity = Math.random() * 0.8 + 0.2;
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += Math.cos(this.y * 0.02) * 1.2;
+        if (this.y < -30) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.font = `${this.size}px serif`;
+        ctx.fillText(this.symbol, this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 40; i++) elements.push(new FloatingPastel());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      elements.forEach(el => { el.update(); el.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
