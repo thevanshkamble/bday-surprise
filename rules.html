@@ -70,8 +70,8 @@
     }
 
     .cute-gif {
-      width: 130px;
-      height: 130px;
+      width: 140px;
+      height: 140px;
       object-fit: cover;
       border-radius: 20px;
       margin-bottom: 15px;
@@ -151,7 +151,7 @@
   <canvas id="bg-canvas"></canvas>
 
   <div class="container">
-    <img id="main-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG4wb3VscDFxYjl5eG01NWtrOXFvYXo1ZGtmb2E0aXJpazZwdnhuNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpwBcxajGQ7SZF888g/giphy.gif" alt="Cute Bear" class="cute-gif">
+    <img id="main-gif" src="https://media.tenor.com/tWbpabRvPG4AAAAM/idiot-lafuddyduddy.gif" alt="Idiot Lafuddyduddy GIF" class="cute-gif">
 
     <h2>Important Rules 📜✨</h2>
     <p style="font-size: 0.9rem; color: #718096; margin-bottom: 12px; font-weight: 500;">
@@ -160,30 +160,23 @@
 
     <div class="rules-card">
       <div class="rule-item">
-        <span class="rule-icon">🎧</span>
-        <div class="rule-text">
-          <strong>Listen Carefully:</strong> Every page has its own special voice note. Make sure your headphones are on!
-        </div>
-      </div>
-
-      <div class="rule-item">
         <span class="rule-icon">🎁</span>
         <div class="rule-text">
-          <strong>Don't Rush Gifts:</strong> Do NOT open any gifts until the voice note specifically mentions the gift name.
+          <strong>Don't Rush Gifts:</strong> Do NOT open any gifts until instructed on the page!
         </div>
       </div>
 
       <div class="rule-item">
         <span class="rule-icon">🔢</span>
         <div class="rule-text">
-          <strong>Follow the Number:</strong> When a gift is mentioned in the audio, open only the exact gift number assigned to it.
+          <strong>Follow the Sequence:</strong> Open gifts in the exact order/number assigned to them.
         </div>
       </div>
 
       <div class="rule-item">
         <span class="rule-icon">➔</span>
         <div class="rule-text">
-          <strong>Step-by-Step:</strong> Move to the next page only after listening to the voice note and opening the gifts accordingly.
+          <strong>Step-by-Step:</strong> Move to the next page only after completing the steps on the current page.
         </div>
       </div>
 
@@ -195,7 +188,7 @@
       </div>
     </div>
 
-    <button class="action-btn" onclick="goToVoicePage()">
+    <button class="action-btn" onclick="goToNextPage()">
       I Agree & Continue ➔
     </button>
   </div>
@@ -212,9 +205,9 @@
     }
 
     // Next page navigation logic
-    function goToVoicePage() {
+    function goToNextPage() {
       sendLog("Navigation", "Agreed to Rules -> Moving to Next Page");
-      window.location.href = "rules.html"; // <-- Yahan apne next page ka URL/filename rakhein
+      window.location.href = "next_page.html"; // <-- Yahan apne agle page ka filename dalein
     }
 
     /* Floating Canvas Background Particles */
