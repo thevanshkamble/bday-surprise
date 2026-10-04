@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Dreamscape - Voice Note 🎧💖</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-pink: #ff2a6d;
+      --soft-rose: #ff758f;
+      --romantic-purple: #9d4edd;
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --text-main: #3d0066;
+      --text-sub: #7a528a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffccd5 0%, #ffb3c1 35%, #e0aaff 70%, #ffcad4 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 10s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      color: var(--text-main);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 460px;
+      background: var(--card-bg);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 2px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 35px 25px;
+      box-shadow: 0 20px 50px rgba(255, 42, 109, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.9);
+      text-align: center;
+      margin: 20px 0;
+      animation: bounceIn 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    h2 {
+      font-family: 'Fredoka', sans-serif;
+      color: var(--primary-pink);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      font-size: 1.75rem;
+      text-shadow: 0 2px 10px rgba(255, 42, 109, 0.2);
+    }
+
+    /* Romantic Glass Audio Card */
+    .audio-card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 2px solid #ffffff;
+      border-radius: 28px;
+      padding: 25px 20px;
+      margin: 22px 0;
+      box-shadow: 0 10px 25px rgba(255, 117, 143, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .audio-card.playing {
+      box-shadow: 0 0 35px rgba(255, 42, 109, 0.4), 0 0 20px rgba(157, 78, 221, 0.25);
+      border-color: var(--primary-pink);
+      transform: translateY(-2px);
+    }
+
+    /* Vibrant Disc Visualizer */
+    .disc-container {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 15px;
+    }
+
+    .disc {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffb3c1 18%, #ffffff 20%, #ff85a1 55%, var(--primary-pink) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 8px 22px rgba(255, 42, 109, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .disc-inner {
+      width: 36px;
+      height: 36px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 4px solid var(--romantic-purple);
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .playing .disc {
+      animation: spin 3.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Romantic Sound Waves Equalizer */
+    .sound-waves {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 30px;
+      margin-bottom: 15px;
+    }
+
+    .bar {
+      width: 6px;
+      height: 8px;
+      background: #ffb3c1;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .playing .bar {
+      animation: wave 1s ease-in-out infinite alternate;
+    }
+
+    .playing .bar:nth-child(1) { animation-delay: 0.1s; }
+    .playing .bar:nth-child(2) { animation-delay: 0.4s; }
+    .playing .bar:nth-child(3) { animation-delay: 0.2s; }
+    .playing .bar:nth-child(4) { animation-delay: 0.5s; }
+    .playing .bar:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes wave {
+      0% { height: 8px; background: var(--primary-pink); }
+      100% { height: 32px; background: var(--romantic-purple); }
+    }
+
+    audio {
+      width: 100%;
+      height: 42px;
+      outline: none;
+      border-radius: 20px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+    }
+
+    .status-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-top: 12px;
+    }
+
+    .playing .status-text {
+      color: var(--primary-pink);
+    }
+
+    /* Romantic Button */
+    .action-btn {
+      background: linear-gradient(135deg, var(--primary-pink), var(--romantic-purple));
+      color: #ffffff;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 22px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 22px rgba(255, 42, 109, 0.35);
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      box-shadow: 0 12px 28px rgba(255, 42, 109, 0.5);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .action-btn:disabled {
+      background: #e2e8f0;
+      color: #a0aec0;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .lock-hint {
+      font-size: 0.82rem;
+      color: var(--primary-pink);
+      margin-top: 10px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <h2>Listen Carefully 🎧💖</h2>
+    <p style="font-size: 0.92rem; color: var(--text-sub); margin-bottom: 5px; font-weight: 500;">
+      A special voice note for you! Press play to listen. 💕
+    </p>
+
+    <!-- Audio Player Card -->
+    <div class="audio-card" id="audio-card">
+      <div class="disc-container">
+        <div class="disc">
+          <div class="disc-inner"></div>
+        </div>
+      </div>
+
+      <!-- Sound Waves Equalizer -->
+      <div class="sound-waves">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      <!-- Audio Element -->
+      <audio id="voice-note" controls>
+        <source src="voicenote.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+
+      <div class="status-text" id="status-text">▶️ Press play to start listening</div>
+    </div>
+
+    <!-- Next Button (Initially Disabled) -->
+    <button id="next-btn" class="action-btn" onclick="goToNextPage()" disabled>
+      Next Page ➔
+    </button>
+    <div id="lock-hint" class="lock-hint">🔒 Audio khatam hone ke baad hi Next button open hoga!</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://itzmukwiypxwliukfsje.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Bg3tHHTwjNIdr0n3GCsImw_usmCiUVn"; 
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function sendLog(event, details) {
+      try {
+        await supabaseClient.from('logs').insert([{ event, details }]);
+      } catch (err) { console.log(err); }
+    }
+
+    const audio = document.getElementById('voice-note');
+    const audioCard = document.getElementById('audio-card');
+    const statusText = document.getElementById('status-text');
+    const nextBtn = document.getElementById('next-btn');
+    const lockHint = document.getElementById('lock-hint');
+
+    // Audio Play Event
+    audio.addEventListener('play', () => {
+      audioCard.classList.add('playing');
+      statusText.innerText = "🎶 Playing voice note... Listen carefully! 💕";
+      sendLog("Audio State", "Started playing voice note");
+    });
+
+    // Audio Pause Event
+    audio.addEventListener('pause', () => {
+      if (!audio.ended) {
+        audioCard.classList.remove('playing');
+        statusText.innerText = "⏸️ Audio Paused";
+        sendLog("Audio State", "Paused voice note");
+      }
+    });
+
+    // Audio Ended Event (Unlocks Next Button)
+    audio.addEventListener('ended', () => {
+      audioCard.classList.remove('playing');
+      statusText.innerText = "✨ Audio Finished! Aap ise dobara bhi sun sakte hain.";
+      
+      // Unlock button
+      nextBtn.disabled = false;
+      lockHint.style.display = "none";
+
+      sendLog("Audio State", "Finished listening to voice note -> Next Unlocked");
+      
+      // Celebrate with confetti
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    });
+
+    // Next page navigation logic
+    function goToNextPage() {
+      if (!nextBtn.disabled) {
+        sendLog("Navigation", "Voice Note Completed -> Moving to Next Page");
+        window.location.href = "gift_page.html";
+      }
+    }
+
+    /* Floating Canvas Background with Flying Letters: S H I V A N I B U B A N E + Emojis */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const elements = [];
+    const nameLetters = ['S', 'H', 'I', 'V', 'A', 'N', 'I', 'B', 'U', 'B', 'A', 'N', 'E'];
+    const emojis = ['💖', '✨', '🌸', '🌹', '💫', '💕', '☁️', '🎈'];
+    
+    // Mix letters and emojis
+    const combinedSymbols = [...nameLetters, ...emojis];
+
+    class FloatingItem {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 30;
+        this.size = Math.random() * 18 + 16;
+        this.speedY = Math.random() * 1.2 + 0.6;
+        this.symbol = combinedSymbols[Math.floor(Math.random() * combinedSymbols.length)];
+        this.isLetter = nameLetters.includes(this.symbol);
+        this.opacity = Math.random() * 0.7 + 0.3;
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += Math.sin(this.y * 0.02) * 1.2;
+        if (this.y < -40) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        if (this.isLetter) {
+          ctx.font = `600 ${this.size + 4}px 'Fredoka', sans-serif`;
+          ctx.fillStyle = '#ff2a6d';
+          ctx.shadowColor = 'rgba(255, 42, 109, 0.4)';
+          ctx.shadowBlur = 8;
+        } else {
+          ctx.font = `${this.size}px serif`;
+        }
+        ctx.fillText(this.symbol, this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 45; i++) elements.push(new FloatingItem());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      elements.forEach(el => { el.update(); el.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
